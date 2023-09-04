@@ -16,8 +16,14 @@ func main() {
 		panic(err)
 	}
 
+	// Create cgroup directory
+	err := os.Mkdir("/sys/fs/cgroup/memory/mydocker", 0755)
+	if err != nil && !os.IsExist(err) {
+		panic(err)
+	}
+
 	// Create a new Memory cgroup and set its limit
-	err := os.WriteFile("/sys/fs/cgroup/memory/mydocker/memory.limit_in_bytes", []byte("50000"), 0700)
+	err = os.WriteFile("/sys/fs/cgroup/memory/mydocker/memory.limit_in_bytes", []byte("50000"), 0700)
 	if err != nil {
 		panic(err)
 	}
