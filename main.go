@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strconv"
 	"syscall"
 )
 
@@ -12,6 +13,19 @@ func main() {
 	const SYS_UNSHARE = 310
 
 	if _, _, err := syscall.Syscall(uintptr(SYS_UNSHARE), uintptr(CLONE_NEWUTS|CLONE_NEWPID|CLONE_NEWNS), 0, 0); err != 0 {
+		panic(err)
+	}
+
+	// Create a new Memory cgroup and set its limit
+	err := os.WriteFile("/sys/fs/cgroup/memory/mydocker/memory.limit_in_bytes", []byte("50000"), 0700)
+	if err != nil {
+		panic(err)
+	}
+
+	// Add this process to the cgroup
+	pid := strconv.Itoa(os.Getpid())
+	err = os.WriteFile("/sys/fs/cgroup/memory/mydocker/cgroup.procs", []byte(pid), 0700)
+	if err != nil {
 		panic(err)
 	}
 
