@@ -23,7 +23,7 @@ func main() {
 	}
 
 	// Create a new Memory cgroup and set its limit
-	err = os.WriteFile("/sys/fs/cgroup/memory/mydocker/memory.limit_in_bytes", []byte("50000"), 0700)
+	err = os.WriteFile("/sys/fs/cgroup/memory/mydocker/memory.limit_in_bytes", []byte("50000000"), 0700)
 	if err != nil {
 		panic(err)
 	}
