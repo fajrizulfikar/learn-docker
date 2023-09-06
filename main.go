@@ -36,13 +36,29 @@ func createNewRoot() {
 
 	// Copy shared dependencies to new root
 	for _, lib := range libs {
+		lib = strings.TrimSpace(lib)
 		if strings.HasPrefix(lib, "/") {
 			cpCmd := exec.Command("cp", "--parents", lib, targetDir)
 			if err := cpCmd.Run(); err != nil {
 				panic("Failed to copy dependency: " + err.Error())
 			}
+
+			// Check if the dependency is a linker
+			if strings.Contains(lib, "ld-linux") {
+				// Ensure the directory exists
+				err = os.MkdirAll(targetDir+"/lib64", 0755)
+				if err != nil {
+					panic("Failed to create lib64 directory: " + err.Error())
+				}
+
+				cpCmd = exec.Command("cp", lib, targetDir+"/lib64/")
+				if err := cpCmd.Run(); err != nil {
+					panic("Failed to copy linker: " + err.Error())
+				}
+			}
 		}
 	}
+
 }
 
 func main() {
