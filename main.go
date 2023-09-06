@@ -4,18 +4,44 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"syscall"
 )
 
 func createNewRoot() {
-	err := os.MkdirAll("/home/fajri/simple_docker/bin", 0755)
+	targetDir := "/home/fajri/simple_docker/"
+	binary := "/bin/sh"
+
+	err := os.MkdirAll(targetDir+"/bin", 0755)
 	if err != nil {
 		panic("Failed to create new root: " + err.Error())
 	}
-	cmd := exec.Command("cp", "-v", "/bin/sh", "/home/fajri/simple_docker/bin")
+
+	cmd := exec.Command("cp", "-v", binary, targetDir+"/bin")
 	err = cmd.Run()
 	if err != nil {
 		panic("Failed to copy /bin/sh: " + err.Error())
+	}
+
+	// Get shared dependencies
+	cmd = exec.Command("ldd", binary)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		panic("Failed to get dependencies: " + err.Error())
+	}
+
+	libs := strings.FieldsFunc(string(output), func(r rune) bool {
+		return r == '\n' || r == ' '
+	})
+
+	// Copy shared dependencies to new root
+	for _, lib := range libs {
+		if strings.HasPrefix(lib, "/") {
+			cpCmd := exec.Command("cp", "--parents", lib, targetDir)
+			if err := cpCmd.Run(); err != nil {
+				panic("Failed to copy dependency: " + err.Error())
+			}
+		}
 	}
 }
 
