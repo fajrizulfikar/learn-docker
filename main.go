@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"strconv"
@@ -56,25 +55,6 @@ func main() {
 	if err := syscall.Chroot("/home/fajri/simple_docker"); err != nil {
 		panic("Failed to chroot: " + err.Error())
 	}
-
-	// // Only enable this for debugging purpose
-	// files, err := os.ReadDir("/bin")
-	// if err != nil {
-	// 	panic("Bin not found: " + err.Error())
-	// }
-	// for _, f := range files {
-	// 	fmt.Println(f.Name())
-	// }
-
-	if err := os.Chdir("/"); err != nil {
-		panic("Failed to change directory: " + err.Error())
-	}
-
-	wd, err := os.Getwd()
-	if err != nil {
-		panic("Failed to get current directory: " + err.Error())
-	}
-	fmt.Println("Current working directory:", wd)
 
 	// Execute a shell within the new namespaces
 	if err := syscall.Exec("/bin/sh", []string{"sh"}, os.Environ()); err != nil {
