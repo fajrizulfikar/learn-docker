@@ -71,14 +71,18 @@ func createNewRoot() {
 func main() {
 	createNewRoot()
 
-	const CLONE_NEWUTS = 0x04000000
-	const CLONE_NEWPID = 0x20000000
-	const CLONE_NEWNS = 0x00020000
-	const SYS_UNSHARE = 310
+	cmd := exec.Command("/bin/sh")
 
-	_, _, errno := syscall.Syscall(uintptr(SYS_UNSHARE), uintptr(CLONE_NEWUTS|CLONE_NEWPID|CLONE_NEWNS), 0, 0)
-	if errno != 0 {
-		panic("Failed to unshare: " + errno.Error())
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS,
+	}
+
+	if err := cmd.Run(); err != nil {
+		panic("Failed to create namespace: " + err.Error())
 	}
 
 	// Create cgroup directory
