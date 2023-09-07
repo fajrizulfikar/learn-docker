@@ -6,13 +6,20 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+
+	"github.com/joho/godotenv"
 )
 
 func createNewRoot() {
-	targetDir := "/home/fajri/simple_docker/"
+	err := godotenv.Load("local.env")
+	if err != nil {
+		panic("Failed to load .env file: " + err.Error())
+	}
+
+	targetDir := os.Getenv("NEW_ROOT_DIR")
 	binary := "/bin/sh"
 
-	err := os.MkdirAll(targetDir+"/bin", 0755)
+	err = os.MkdirAll(targetDir+"/bin", 0755)
 	if err != nil {
 		panic("Failed to create new root: " + err.Error())
 	}
