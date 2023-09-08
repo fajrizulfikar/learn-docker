@@ -78,7 +78,7 @@ func main() {
 	}
 
 	// Create cgroup directory
-	err = os.Mkdir("/sys/fs/cgroup/memory/mydocker", 0755)
+	err = os.Mkdir("/sys/fs/cgroup/memory/simple_docker", 0755)
 	if err != nil && !os.IsExist(err) {
 		panic("Failed to create cgroup: " + err.Error())
 	}
