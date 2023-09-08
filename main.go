@@ -52,7 +52,7 @@ func createNewRoot() {
 				panic("Failed to copy dependency: " + err.Error())
 			}
 
-			// Check if the dependency is a linker
+			// Check if the dependency is linked
 			if strings.Contains(lib, "ld-linux") {
 				// Ensure the directory exists
 				err = os.MkdirAll(targetDir+"/lib64", 0755)
@@ -62,7 +62,7 @@ func createNewRoot() {
 
 				cpCmd = exec.Command("cp", lib, targetDir+"/lib64/")
 				if err := cpCmd.Run(); err != nil {
-					panic("Failed to copy linker: " + err.Error())
+					panic("Failed to copy linked dependencies: " + err.Error())
 				}
 			}
 		}
