@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"strconv"
@@ -24,6 +25,7 @@ func createNewRoot() {
 		panic("Failed to create new root: " + err.Error())
 	}
 
+	fmt.Println("targetDir", targetDir)
 	cmd := exec.Command("cp", "-v", binary, targetDir+"/bin")
 	err = cmd.Run()
 	if err != nil {
@@ -71,19 +73,8 @@ func createNewRoot() {
 func main() {
 	createNewRoot()
 
-	cmd := exec.Command("/bin/sh")
-
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS,
-	}
-
-	if err := cmd.Run(); err != nil {
-		panic("Failed to create namespace: " + err.Error())
-	}
+	// Create namespace
+	syscall.Unshare(syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS)
 
 	// Create cgroup directory
 	err := os.Mkdir("/sys/fs/cgroup/memory/mydocker", 0755)
