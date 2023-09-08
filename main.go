@@ -86,14 +86,14 @@ func main() {
 	}
 
 	// Create a new Memory cgroup and set its limit
-	err = os.WriteFile("/sys/fs/cgroup/memory/mydocker/memory.limit_in_bytes", []byte("50000000"), 0700)
+	err = os.WriteFile("/sys/fs/cgroup/memory/simple_docker/memory.limit_in_bytes", []byte("50000000"), 0700)
 	if err != nil {
 		panic("Failed to set memory limit: " + err.Error())
 	}
 
 	// Add this process to the cgroup
 	pid := strconv.Itoa(os.Getpid())
-	err = os.WriteFile("/sys/fs/cgroup/memory/mydocker/cgroup.procs", []byte(pid), 0700)
+	err = os.WriteFile("/sys/fs/cgroup/memory/simple_docker/cgroup.procs", []byte(pid), 0700)
 	if err != nil {
 		panic("Failed to add process to cgroup: " + err.Error())
 	}
