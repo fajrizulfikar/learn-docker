@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"strconv"
@@ -25,7 +24,6 @@ func createNewRoot() {
 		panic("Failed to create new root: " + err.Error())
 	}
 
-	fmt.Println("targetDir", targetDir)
 	cmd := exec.Command("cp", "-v", binary, targetDir+"/bin")
 	err = cmd.Run()
 	if err != nil {
@@ -101,6 +99,10 @@ func main() {
 	// Change root filesystem to an isolated filesystem
 	if err := syscall.Chroot("/home/fajri/simple_docker"); err != nil {
 		panic("Failed to chroot: " + err.Error())
+	}
+
+	if err := syscall.Chdir("/"); err != nil {
+		panic("Failed to chdir: " + err.Error())
 	}
 
 	// Open shell in isolated system
