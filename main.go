@@ -100,7 +100,7 @@ func main() {
 		panic("Failed to chroot: " + err.Error())
 	}
 
-	// Execute a shell within the new namespaces
+	// Open shell in isolated system
 	if err := syscall.Exec("/bin/sh", []string{"sh"}, os.Environ()); err != nil {
 		panic("Failed to exec /bin/sh: " + err.Error())
 	}
