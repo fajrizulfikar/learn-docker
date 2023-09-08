@@ -97,7 +97,7 @@ func main() {
 	}
 
 	// Change root filesystem to an isolated filesystem
-	if err := syscall.Chroot("/home/fajri/simple_docker"); err != nil {
+	if err := syscall.Chroot(os.Getenv("NEW_ROOT_DIR")); err != nil {
 		panic("Failed to chroot: " + err.Error())
 	}
 
