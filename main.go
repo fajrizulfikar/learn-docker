@@ -74,10 +74,13 @@ func main() {
 	createNewRoot()
 
 	// Create namespace
-	syscall.Unshare(syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS)
+	err := syscall.Unshare(syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS)
+	if err != nil {
+		panic("Failed to create namespace" + err.Error())
+	}
 
 	// Create cgroup directory
-	err := os.Mkdir("/sys/fs/cgroup/memory/mydocker", 0755)
+	err = os.Mkdir("/sys/fs/cgroup/memory/mydocker", 0755)
 	if err != nil && !os.IsExist(err) {
 		panic("Failed to create cgroup: " + err.Error())
 	}
